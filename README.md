@@ -1,6 +1,7 @@
 # SeguidorSolar
 
-_This code written in C++ denies access to devices within the same network you are on._
+Este proyecto consiste en un seguidor solar con dos servomotores (eje x & eje y) y 4 LDR (right, left, bottom, top). Este dispositivo, diseñado para optimizar la captura de energía solar, utiliza sensores de luz (LDR) para detectar la posición del sol a lo largo del día y ajusta automáticamente sus servomotores para seguir su trayectoria. La implementación de este seguimiento solar demuestra una valiosa contribución a la eficiencia de los sistemas de energía renovable. El repositorio incluye un código bien documentado y detallado, proporcionando a otros desarrolladores la capacidad de comprender y reproducir este proyecto de manera efectiva.._
+
 
 ## Comenzando 🚀
 
