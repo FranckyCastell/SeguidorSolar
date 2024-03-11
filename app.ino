@@ -1,5 +1,5 @@
-#define __DEBUG__
 #include <Servo.h>
+#define __DEBUG__
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -21,21 +21,21 @@ int ldr_03 = 34;       // PIN ABAJO
 int ldr_04 = 36;       // PIN ARRIBA
 int Clean_Buffer = 39; // CLEAN BOOFER VALOR "GROUND" = 0
 
-// VARIABLES DE LOS FOTORESISTENCIAS
-int rightLDR = 0;  // VALOR DE LA FOTO RESISTENCIA ( ldr_01 )
-int leftLDR = 0;   // VALOR DE LA FOTO RESISTENCIA ( ldr_02 )
-int bottomLDR = 0; // VALOR DE LA FOTO RESISTENCIA ( ldr_03 )
-int topLDR = 0;    // VALOR DE LA FOTO RESISTENCIA ( ldr_04 )
+// VARIABLES DE LAS FOTORESISTENCIAS
+int rightLDR = 0;  // VALOR DE LA FOTORESISTENCIA ( ldr_01 )
+int leftLDR = 0;   // VALOR DE LA FOTORESISTENCIA ( ldr_02 )
+int bottomLDR = 0; // VALOR DE LA FOTORESISTENCIA ( ldr_03 )
+int topLDR = 0;    // VALOR DE LA FOTORESISTENCIA ( ldr_04 )
 
 // DIFERENCIES ENTRE LES FOTORESISTENCIES
 int horizontalError = 0; // DIFERENCIA ENTRE ( rightLDR & leftLDR )
 int verticalError = 0;   // DIFERENCIA ENTRE ( topLDR & bottomLDR )
 
-// POSICIONS DELS SERVOMOTORS INICIALS
-int ShorizontalPos = 90; // DEFINIMOS POSICION INICIAL SERVO MOTOR HORIZONTAL
-int SverticalPos = 90;   // DEFINIMOS POSICION INICIAL SERVO MOTOR VERTICALs
+// POSICIONES DE LOS SERVOMOTORS INICIALES
+int ShorizontalPos = Shorizontal.read(); // DEFINIMOS POSICION INICIAL SERVO MOTOR HORIZONTAL
+int SverticalPos = Svertical.read();   // DEFINIMOS POSICION INICIAL SERVO MOTOR VERTICALs
 
-// VARIABLES PER ELS ANGLES
+// VARIABLES PARA LOS ANGULOS
 int acimut = 0;            // VALOR ANGULO ACIMUT
 int inclinacio = 0;        // VALOR ANGULO INCLINACION
 int posicioHorizontal = 0; // VALOR ANGULO POSICION SERVO HORIZONTAL
@@ -79,12 +79,12 @@ void loop()
     display.print("~~~ PAMFER ~~~"); // IMPRIMIMOS TEXTO
 
     display.setCursor(20, 30);   // MOVEMOS EL CURSOR EN LA POSICION ( 20, 30 ) DE LA PANTALLA OLED | COLUMNA, FILA
-    acimut = Shorizontal.read(); // LEEMOS VALORES DEL SERVO HORIZONTAL
-    display.print("- ACIMUT: "); // IMPRIMIMOS TEXTO
+    acimut = posicioHorizontal; // LEEMOS VALORES DEL SERVO HORIZONTAL
+    display.print("- ACIMUT:  "); // IMPRIMIMOS TEXTO
     display.print(acimut);       // IMPRIMIMOS EL ACIMUT A LA QUE SE ENCUENTRA EL SERVO MOTOR EN ESTE MOMENTO
 
     display.setCursor(20, 40);       // MOVEMOS EL CURSOR EN LA POSICION ( 20, 40 ) DE LA PANTALLA OLED | COLUMNA, FILA
-    inclinacio = Svertical.read();   // LEEMOS VALORES DEL SERVO VERTICAL
+    inclinacio = posicioVertical;   // LEEMOS VALORES DEL SERVO VERTICAL
     display.print("- INCLINACIO: "); // IMPRIMIMOS TEXTO
     display.println(inclinacio);     // IMPRIMIMOS LA INCLINACION A LA QUE SE ENCUENTRA EL SERVO MOTOR EN ESTE MOMENTO
 
@@ -116,31 +116,31 @@ void loop()
     // LDR PRINT
 
     // SERVO PRINT
-    posicioHorizontal = Shorizontal.read(); // LEEMOS LA POSICION DEL SERVO MOTOR HORIZONTAL
+    posicioHorizontal = 36+Shorizontal.read(); // LEEMOS LA POSICION DEL SERVO MOTOR HORIZONTAL
     Serial.print(" SERVO HORIZONTAL: ");    // IMPRIMIMOS TEXTO
     Serial.print(posicioHorizontal);        // IMPRIMIMOS LA POSICION DEL SERVO MOTOR HORIZONTAL
 
-    posicioVertical = Svertical.read(); // LEEMOS LA POSICION DEL SERVO MOTOR HORIZONTAL
+    posicioVertical = 64+Svertical.read(); // LEEMOS LA POSICION DEL SERVO MOTOR VERTICAL
     Serial.print(" SERVO VERTICAL: ");  // IMPRIMIMOS TEXTO
-    Serial.println(posicioVertical);    // IMPRIMIMOS LA POSICION DEL SERVO MOTOR HORIZONTAL
+    Serial.println(posicioVertical);    // IMPRIMIMOS LA POSICION DEL SERVO MOTOR VERTICAL
     // SERVO PRINT
 
     // LOGICA
     rightLDR = analogRead(ldr_01);        // VALOR DE LA RESISTENCIA DERECHA
     leftLDR = analogRead(ldr_02);         // VALOR DE LA RESISTENCIA IZQUIERDA
-    horizontalError = rightLDR - leftLDR; // DIFERENCIAS ENTRE LAS DOS
+    horizontalError = leftLDR - rightLDR; // DIFERENCIAS ENTRE LAS DOS
 
-    if (horizontalError > 20) // CONDICION LA CUAL SI ES > 20 MOVER HACIA LA DERECHA
+    if (horizontalError > 200) // CONDICION LA CUAL SI ES > 20 MOVER HACIA LA DERECHA
     {
         ShorizontalPos--;
-        ShorizontalPos = constrain(ShorizontalPos, 0, 179);
+        ShorizontalPos = constrain(ShorizontalPos, 40, 165);
         Shorizontal.write(ShorizontalPos);
     }
 
-    else if (horizontalError < -20) // CONDICION LA CUAL SI ES < 20 MOVER HACIA LA IZQUIERDA
+    else if (horizontalError < -200) // CONDICION LA CUAL SI ES < 20 MOVER HACIA LA IZQUIERDA
     {
         ShorizontalPos++;
-        ShorizontalPos = constrain(ShorizontalPos, 0, 179);
+        ShorizontalPos = constrain(ShorizontalPos, 40, 165);
         Shorizontal.write(ShorizontalPos);
     }
 
@@ -148,19 +148,19 @@ void loop()
     bottomLDR = analogRead(ldr_03);     // VALOR DE LA RESISTENCIA DE ABAJO
     verticalError = topLDR - bottomLDR; // DIFERENCIAS ENTRE LAS DOS
 
-    if (verticalError > 50) // CONDICION LA CUAL SI ES < 50 MOVER HACIA ARRIBA
+    if (verticalError > 500) // CONDICION LA CUAL SI ES < 50 MOVER HACIA ARRIBA
     {
         SverticalPos++;
-        SverticalPos = constrain(SverticalPos, 10, 120);
+        SverticalPos = constrain(SverticalPos, 0, 25);
         Svertical.write(SverticalPos);
     }
 
-    else if (verticalError < -50) // CONDICION LA CUAL SI ES > 50 MOVER HACIA ABAJO
+    else if (verticalError < -200) // CONDICION LA CUAL SI ES > 50 MOVER HACIA ABAJO
     {
         SverticalPos--;
-        SverticalPos = constrain(SverticalPos, 10, 120);
+        SverticalPos = constrain(SverticalPos, 0, 52);
         Svertical.write(SverticalPos);
     }
-    delay(400);
+    delay(5);
     // LOGICA
 }
